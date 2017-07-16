@@ -317,6 +317,8 @@ namespace IfcGeom {
 
 		IfcParse::IfcFile* getFile() const { return ifc_file; }
 
+		Kernel* getKernel() { return &kernel; }
+
         const std::vector<IfcGeom::filter_t>& filters() const { return filters_; }
         std::vector<IfcGeom::filter_t>& filters() { return filters_; }
 
