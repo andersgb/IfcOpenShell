@@ -55,12 +55,10 @@ public:
 
     SerializerSettings()
         : precision(DEFAULT_PRECISION)
-    {
-        memset(offset, 0, sizeof(offset));
-    }
+    {}
 
-    /// Optional offset that is applied to serialized objects, (0,0,0) by default.
-    double offset[3];
+	/// Optional transformation to apply to serialized objects, identity by default
+	gp_Trsf transform;
 
     /// Sets the precision used to format floating-point values, 15 by default.
     /// Use a negative value to use the system's default precision (should be 6 typically).

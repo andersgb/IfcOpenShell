@@ -592,13 +592,13 @@ int main(int argc, char** argv)
 	int old_progress = -1;
 
     if (center_model || model_offset) {
-        double* offset = serializer->settings().offset;
+        std::stringstream msg;
         if (center_model) {
             gp_XYZ center = (context_iterator.bounds_min() + context_iterator.bounds_max()) * 0.5;
-            offset[0] = -center.X();
-            offset[1] = -center.Y();
-            offset[2] = -center.Z();
+			serializer->settings().transform.SetTranslation(center);
+			msg << "Centering model with offset (" << center.X() << "," << center.Y() << "," << center.Z() << ")";
         } else {
+			double offset[3];
             if (sscanf(offset_str.c_str(), "%lf;%lf;%lf", &offset[0], &offset[1], &offset[2]) != 3) {
                 std::cerr << "[Error] Invalid use of --model-offset\n";
                 delete serializer;
@@ -606,10 +606,10 @@ int main(int argc, char** argv)
                 print_options(serializer_options);
                 return EXIT_FAILURE;
             }
+			msg << "Using model offset (" << offset[0] << "," << offset[1] << "," << offset[2] << ")";
+			serializer->settings().transform.SetTranslation(gp_XYZ(offset[0], offset[1], offset[2]));
         }
 
-        std::stringstream msg;
-        msg << "Using model offset (" << offset[0] << "," << offset[1] << "," << offset[2] << ")";
         Logger::Notice(msg.str());
     }
 

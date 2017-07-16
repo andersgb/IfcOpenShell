@@ -17,7 +17,8 @@
  *                                                                              *
  ********************************************************************************/
 
-
+#include <gp_Trsf.hxx>
+#include <gp_Quaternion.hxx>
 #include "WavefrontObjSerializer.h"
 
 #include "../ifcgeom/IfcGeomRenderStyles.h"
@@ -83,17 +84,26 @@ void WaveFrontOBJSerializer::write(const IfcGeom::TriangulationElement<real_t>* 
 
 	const int vcount = (int)mesh.verts().size() / 3;
     for ( std::vector<real_t>::const_iterator it = mesh.verts().begin(); it != mesh.verts().end(); ) {
-        const real_t x = *(it++) + (real_t)settings().offset[0];
-        const real_t y = *(it++) + (real_t)settings().offset[1];
-        const real_t z = *(it++) + (real_t)settings().offset[2];
-		obj_stream << "v " << x << " " << y << " " << z << "\n";
+		gp_XYZ pos;
+		pos.SetX(*(it++));
+		pos.SetY(*(it++));
+		pos.SetZ(*(it++));
+		settings().transform.Transforms(pos);
+		obj_stream << "v " << pos.X() << " " << pos.Y() << " " << pos.Z() << "\n";
+
 	}
 
     for ( std::vector<real_t>::const_iterator it = mesh.normals().begin(); it != mesh.normals().end(); ) {
-        const real_t x = *(it++);
-        const real_t y = *(it++);
-        const real_t z = *(it++);
-		obj_stream << "vn " << x << " " << y << " " << z << "\n";
+		gp_XYZ normal;
+		normal.SetX(*(it++));
+		normal.SetY(*(it++));
+		normal.SetZ(*(it++));
+		gp_Quaternion rot = settings().transform.GetRotation();
+		gp_Vec rotated_normal = rot.Multiply(normal);
+		obj_stream << "vn "
+				<< rotated_normal.X() << " "
+				<< rotated_normal.Y() << " "
+				<< rotated_normal.Z() << "\n";
 	}
 
     for (std::vector<real_t>::const_iterator it = mesh.uvs().begin(); it != mesh.uvs().end();) {
