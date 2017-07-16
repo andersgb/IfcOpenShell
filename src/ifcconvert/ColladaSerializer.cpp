@@ -213,11 +213,27 @@ void ColladaSerializer::ColladaExporter::ColladaScene::add(
 		{ (double)posmatrix[2], (double)posmatrix[5], (double)posmatrix[8], (double)posmatrix[11] },
 		{ 0, 0, 0, 1 }
 	};
-	
-	/// @todo: TFK: Rather than applying this offset to all leafs (which might be undesirable) should this offset be applied to a node higher up in the hierarchy?
-    matrix_array[0][3] += serializer->settings().offset[0];
-    matrix_array[1][3] += serializer->settings().offset[1];
-    matrix_array[2][3] += serializer->settings().offset[2];
+
+	gp_Trsf pos_trsf;
+	pos_trsf.SetValues(matrix_array[0][0], matrix_array[0][1], matrix_array[0][2], matrix_array[0][3],
+					   matrix_array[1][0], matrix_array[1][1], matrix_array[1][2], matrix_array[1][3],
+					   matrix_array[2][0], matrix_array[2][1], matrix_array[2][2], matrix_array[2][3]);
+
+	// @todo: TFK: Rather than applying this offset to all leafs (which might be undesirable) should this offset be applied to a node higher up in the hierarchy?
+	pos_trsf.PreMultiply(serializer->settings().transform);
+
+	matrix_array[0][0] = pos_trsf.Value(1,1);
+	matrix_array[0][1] = pos_trsf.Value(1,2);
+	matrix_array[0][2] = pos_trsf.Value(1,3);
+	matrix_array[0][3] = pos_trsf.Value(1,4);
+	matrix_array[1][0] = pos_trsf.Value(2,1);
+	matrix_array[1][1] = pos_trsf.Value(2,2);
+	matrix_array[1][2] = pos_trsf.Value(2,3);
+	matrix_array[1][3] = pos_trsf.Value(2,4);
+	matrix_array[2][0] = pos_trsf.Value(3,1);
+	matrix_array[2][1] = pos_trsf.Value(3,2);
+	matrix_array[2][2] = pos_trsf.Value(3,3);
+	matrix_array[2][3] = pos_trsf.Value(3,4);
 
 	delete relative_trsf;
 
