@@ -306,6 +306,31 @@ namespace IfcGeom {
 			return true;
 		}
 
+		gp_Trsf siteTransform() {
+			IfcEntityList::ptr site_list = ifc_file->entitiesByType("IfcSite");
+			if (site_list->size() != 1) {
+				std::stringstream ss;
+				ss << "--site-local-placement only valid for IFCs with 1 IfcSite, found " << site_list->size();
+				Logger::Message(Logger::LOG_ERROR, ss.str());
+				return EXIT_FAILURE;
+			}
+			IfcSchema::IfcSite* site = (*(site_list->begin()))->as<IfcSchema::IfcSite>();
+
+			if (site->hasObjectPlacement()) {
+				gp_Trsf site_trsf;
+				if (!context_iterator.getKernel()->convert(site->ObjectPlacement(), site_trsf)) {
+					Logger::Error("Cannot get IfcSite ObjectPlacement transformation");
+					delete serializer;
+					return EXIT_FAILURE;
+				}
+				serializer->settings().transform = site_trsf.Inverted();
+				msg << "Using site local placement";
+			} else {
+				Logger::Warning("IfcSite has no ObjectPlacement, --site-local-placement has no effect");
+			}
+		}
+
+
 		int progress() const { return 100 * done / total; }
 
 		const std::string& getUnitName() const { return unit_name; }
@@ -316,8 +341,6 @@ namespace IfcGeom {
 		std::string getLog() const { return Logger::GetLog(); }
 
 		IfcParse::IfcFile* getFile() const { return ifc_file; }
-
-		Kernel* getKernel() { return &kernel; }
 
         const std::vector<IfcGeom::filter_t>& filters() const { return filters_; }
         std::vector<IfcGeom::filter_t>& filters() { return filters_; }

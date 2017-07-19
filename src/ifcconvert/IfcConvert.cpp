@@ -621,29 +621,6 @@ int main(int argc, char** argv)
 			msg << "Using model offset (" << offset[0] << "," << offset[1] << "," << offset[2] << ")";
 			serializer->settings().transform.SetTranslation(gp_XYZ(offset[0], offset[1], offset[2]));
         } else {
-			IfcParse::IfcFile *ifc_file = context_iterator.getFile();
-			IfcEntityList::ptr site_list = ifc_file->entitiesByType("IfcSite");
-			if (site_list->size() != 1) {
-				std::stringstream ss;
-				ss << "--site-local-placement only valid for IFCs with 1 IfcSite, found " << site_list->size();
-				Logger::Error(ss.str());
-				delete serializer;
-				return EXIT_FAILURE;
-			}
-			IfcSchema::IfcSite* site = (*(site_list->begin()))->as<IfcSchema::IfcSite>();
-
-			if (site->hasObjectPlacement()) {
-				gp_Trsf site_trsf;
-				if (!context_iterator.getKernel()->convert(site->ObjectPlacement(), site_trsf)) {
-					Logger::Error("Cannot get IfcSite ObjectPlacement transformation");
-					delete serializer;
-					return EXIT_FAILURE;
-				}
-				serializer->settings().transform = site_trsf.Inverted();
-				msg << "Using site local placement";
-			} else {
-				Logger::Warning("IfcSite has no ObjectPlacement, --site-local-placement has no effect");
-			}
 		}
         Logger::Notice(msg.str());
     }

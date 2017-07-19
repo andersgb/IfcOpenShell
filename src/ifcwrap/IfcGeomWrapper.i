@@ -112,9 +112,11 @@ struct ShapeRTTI : public boost::static_visitor<PyObject*>
 %ignore IfcGeom::Iterator<float>::Iterator(const IfcGeom::IteratorSettings&, IfcParse::IfcFile*);
 %ignore IfcGeom::Iterator<float>::Iterator(const IfcGeom::IteratorSettings&, void*, int);
 %ignore IfcGeom::Iterator<float>::Iterator(const IfcGeom::IteratorSettings&, std::istream&, int);
+%ignore IfcGeom::Iterator<float>::getKernel();
 %ignore IfcGeom::Iterator<double>::Iterator(const IfcGeom::IteratorSettings&, IfcParse::IfcFile*);
 %ignore IfcGeom::Iterator<double>::Iterator(const IfcGeom::IteratorSettings&, void*, int);
 %ignore IfcGeom::Iterator<double>::Iterator(const IfcGeom::IteratorSettings&, std::istream&, int);
+%ignore IfcGeom::Iterator<double>::getKernel();
 
 %extend IfcGeom::IteratorSettings {
 	%pythoncode %{
