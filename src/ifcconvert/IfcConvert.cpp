@@ -607,8 +607,8 @@ int main(int argc, char** argv)
         std::stringstream msg;
         if (center_model) {
             gp_XYZ center = (context_iterator.bounds_min() + context_iterator.bounds_max()) * 0.5;
-			serializer->settings().transform.SetTranslation(center);
-			msg << "Centering model with offset (" << center.X() << "," << center.Y() << "," << center.Z() << ")";
+			serializer->settings().transform.SetTranslation(center.Reversed());
+			msg << "Centering model with offset (" << -center.X() << "," << -center.Y() << "," << -center.Z() << ")";
         } else if (model_offset) {
 			double offset[3];
             if (sscanf(offset_str.c_str(), "%lf;%lf;%lf", &offset[0], &offset[1], &offset[2]) != 3) {
