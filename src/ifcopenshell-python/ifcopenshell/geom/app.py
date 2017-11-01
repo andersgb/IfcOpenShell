@@ -46,13 +46,9 @@ except ImportError:
     
 class configuration(object):
     def __init__(self):
-        try:
-            import ConfigParser
-            Cfg = ConfigParser.RawConfigParser
-        except:
-            import configparser
-            Cfg = configparser.ConfigParser(interpolation=None)
-            
+        # python2 users need to 'pip install configparser'
+        from configparser import ConfigParser
+
         conf_file = os.path.expanduser(os.path.join("~", ".ifcopenshell", "app", "snippets.conf"))
         if conf_file.startswith("~"):
             conf_file = None
@@ -65,7 +61,7 @@ class configuration(object):
             os.makedirs(os.path.dirname(conf_file))
             
         if not os.path.exists(conf_file):
-            config = Cfg()
+            config = ConfigParser(interpolation=None)
             config.add_section("snippets")
             config.set("snippets", "print all wall ids", self.config_encode("""
 ###########################################################################
@@ -96,7 +92,7 @@ if selection:
             with open(conf_file, 'w') as configfile:
                 config.write(configfile)
         
-        self.config = Cfg()
+        self.config = ConfigParser(interpolation=None)
         self.config.read(conf_file)
         
     def options(self, s):
