@@ -48,7 +48,7 @@ class configuration(object):
     def __init__(self):
         try:
             import ConfigParser
-            Cfg = ConfigParser.RawConfigParser
+            Cfg = ConfigParser.RawConfigParser()
         except:
             import configparser
             Cfg = configparser.ConfigParser(interpolation=None)
@@ -65,7 +65,7 @@ class configuration(object):
             os.makedirs(os.path.dirname(conf_file))
             
         if not os.path.exists(conf_file):
-            config = Cfg()
+            config = Cfg
             config.add_section("snippets")
             config.set("snippets", "print all wall ids", self.config_encode("""
 ###########################################################################
@@ -96,7 +96,7 @@ if selection:
             with open(conf_file, 'w') as configfile:
                 config.write(configfile)
         
-        self.config = Cfg()
+        self.config = Cfg
         self.config.read(conf_file)
         
     def options(self, s):
