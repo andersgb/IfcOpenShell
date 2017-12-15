@@ -684,7 +684,7 @@ namespace IfcGeom {
             kernel.setValue(IfcGeom::Kernel::GV_DIMENSIONALITY, (settings.get(IteratorSettings::INCLUDE_CURVES)
                 ? (settings.get(IteratorSettings::EXCLUDE_SOLIDS_AND_SURFACES) ? -1. : 0.) : +1.));
 			if (settings.get(IteratorSettings::SITE_LOCAL_PLACEMENT)) {
-				kernel.set_conversion_placement_rel_to(IfcSchema::Type::IfcSite);
+				kernel.set_conversion_placement_rel_to(IfcSchema::Type::IfcBuilding);
 			}
 		}
 
